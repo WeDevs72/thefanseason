@@ -69,10 +69,25 @@ export async function GET(req: Request) {
       }
     }
 
+    // 5. Trigger Leaderboard Ranks Aggregation programmatically if predictions were evaluated
+    if (evaluatedCount > 0) {
+      try {
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+        const triggerUrl = new URL(`${siteUrl}/api/leaderboard/update`);
+        if (cronSecret) {
+          triggerUrl.searchParams.set('secret', cronSecret);
+        }
+        // Fire-and-forget fetch to complete evaluation response immediately
+        fetch(triggerUrl.toString()).catch(e => console.error('Leaderboard trigger fetch error:', e));
+      } catch (triggerError) {
+        console.error('Error initiating leaderboard update:', triggerError);
+      }
+    }
+
     return NextResponse.json({
       success: true,
       evaluatedCount,
-      message: `Successfully evaluated ${evaluatedCount} predictions.`
+      message: `Successfully evaluated ${evaluatedCount} predictions. Leaderboard update triggered.`
     });
   } catch (error: any) {
     console.error('Error evaluating predictions:', error);
