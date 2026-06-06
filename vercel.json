@@ -1,0 +1,16 @@
+{
+  "crons": [
+    {
+      "path": "/api/fixtures/sync",
+      "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/predictions/evaluate",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/leaderboard/update",
+      "schedule": "*/30 * * * *"
+    }
+  ]
+}
