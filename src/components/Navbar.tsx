@@ -4,11 +4,13 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from './AuthContext';
-import { Menu, X, User, Trophy, Calendar, ShoppingBag, ShieldAlert, Award, LogOut, LayoutDashboard, CreditCard } from 'lucide-react';
+import { Menu, X, User, Trophy, Calendar, ShoppingBag, ShieldAlert, Award, LogOut, LayoutDashboard, CreditCard, Sun, Moon } from 'lucide-react';
+import { useTheme } from './ThemeContext';
 
 export default function Navbar() {
   const pathname = usePathname();
   const { user, profile, loading, signOut } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -63,6 +65,13 @@ export default function Navbar() {
 
           {/* User Auth Section */}
           <div className="hidden md:flex items-center gap-4">
+            <button
+              onClick={toggleTheme}
+              className="p-2.5 rounded-lg bg-surface border border-border-dark hover:border-gaming-green/45 text-text-muted hover:text-white transition-colors cursor-pointer"
+              title={theme === 'dark' ? 'Activate Light Mode' : 'Activate Dark Mode'}
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4 text-gaming-gold fill-gaming-gold/15" /> : <Moon className="w-4 h-4 text-gaming-purple fill-gaming-purple/15" />}
+            </button>
             {loading ? (
               <div className="h-9 w-24 bg-surface rounded animate-pulse" />
             ) : user ? (
@@ -157,7 +166,14 @@ export default function Navbar() {
           </div>
 
           {/* Mobile menu button */}
-          <div className="flex md:hidden">
+          <div className="flex md:hidden items-center gap-2">
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg bg-surface border border-border-dark hover:border-gaming-green/45 text-text-muted hover:text-white"
+              aria-label="Toggle Theme"
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4 text-gaming-gold" /> : <Moon className="w-4 h-4 text-gaming-purple" />}
+            </button>
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="inline-flex items-center justify-center p-2 rounded-md text-text-muted hover:text-white hover:bg-surface-hover focus:outline-none"

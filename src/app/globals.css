@@ -1,16 +1,17 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #0a0a0c;
-  --color-surface: #111827;
-  --color-surface-hover: #1f2937;
+  --color-background: var(--bg-color);
+  --color-surface: var(--surface-color);
+  --color-surface-hover: var(--surface-hover-color);
   --color-gaming-green: #00C853;
   --color-gaming-gold: #FFD700;
   --color-gaming-purple: #8B5CF6;
   --color-gaming-neon: #00E5FF;
-  --color-border-dark: #1F2937;
-  --color-text-primary: #FFFFFF;
-  --color-text-muted: #9CA3AF;
+  --color-border-dark: var(--border-color);
+  --color-text-primary: var(--text-primary-color);
+  --color-text-muted: var(--text-muted-color);
+  --color-white: var(--text-primary-color);
   
   --animate-shimmer: shimmer 2.5s linear infinite;
   --animate-scanline: scanline 6s linear infinite;
@@ -42,6 +43,37 @@
 :root {
   --background: #0a0a0c;
   --foreground: #ffffff;
+  
+  --bg-color: #0a0a0c;
+  --surface-color: #111827;
+  --surface-hover-color: #1f2937;
+  --border-color: #1f2937;
+  --text-primary-color: #ffffff;
+  --text-muted-color: #9ca3af;
+  
+  --panel-bg: rgba(17, 24, 39, 0.75);
+  --bg-radial-1: rgba(0, 200, 83, 0.05);
+  --bg-radial-2: rgba(139, 92, 246, 0.05);
+  --bg-grid: rgba(18, 18, 24, 0.4);
+  --scanline-opacity: 1;
+}
+
+.light {
+  --background: #f9fafb;
+  --foreground: #111827;
+  
+  --bg-color: #f9fafb;
+  --surface-color: #ffffff;
+  --surface-hover-color: #f3f4f6;
+  --border-color: #e5e7eb;
+  --text-primary-color: #111827;
+  --text-muted-color: #4b5563;
+  
+  --panel-bg: rgba(255, 255, 255, 0.85);
+  --bg-radial-1: rgba(0, 200, 83, 0.03);
+  --bg-radial-2: rgba(139, 92, 246, 0.03);
+  --bg-grid: rgba(229, 231, 235, 0.6);
+  --scanline-opacity: 0.1;
 }
 
 body {
@@ -50,18 +82,18 @@ body {
   font-family: 'Outfit', 'Inter', system-ui, sans-serif;
   overflow-x: hidden;
   background-image: 
-    radial-gradient(circle at 10% 20%, rgba(0, 200, 83, 0.05) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 40%),
-    linear-gradient(rgba(18, 18, 24, 0.4) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(18, 18, 24, 0.4) 1px, transparent 1px);
+    radial-gradient(circle at 10% 20%, var(--bg-radial-1) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, var(--bg-radial-2) 0%, transparent 40%),
+    linear-gradient(var(--bg-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
   background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
 }
 
 /* Custom Cyberpunk Elements */
 .gaming-panel {
-  background: rgba(17, 24, 39, 0.75);
+  background: var(--panel-bg);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(31, 41, 55, 0.8);
+  border: 1px solid var(--border-color);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
   position: relative;
   overflow: hidden;
@@ -250,6 +282,7 @@ body {
   background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
   background-size: 100% 4px, 6px 100%;
   pointer-events: none;
+  opacity: var(--scanline-opacity);
 }
 
 .cyber-grid {
@@ -265,3 +298,34 @@ body {
   background-size: 20px 20px;
   pointer-events: none;
 }
+
+/* Light mode specific element overrides */
+.light input, .light select, .light textarea {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  border-color: #d1d5db !important;
+}
+
+.light input:focus, .light select:focus, .light textarea:focus {
+  border-color: #00C853 !important;
+  box-shadow: 0 0 5px rgba(0, 200, 83, 0.3) !important;
+}
+
+.light .bg-\[\#0d0f14\] {
+  background-color: #f3f4f6 !important;
+}
+
+.light .text-white {
+  color: #111827 !important;
+}
+
+.light .text-text-primary {
+  color: #111827 !important;
+}
+
+.light .text-gaming-gradient {
+  background: linear-gradient(90deg, #111827 0%, #4b5563 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
