@@ -26,9 +26,9 @@ export default function OnboardingModal() {
   const supabase = createClientComponentClient();
 
   useEffect(() => {
-    // Show onboarding if logged in but username starts with 'fan_' (default auto-gen) or team/country is missing
+    // Show onboarding if logged in but username starts with 'abc_' (default auto-gen) or team/country is missing
     if (user && profile) {
-      const isDefaultUsername = profile.username.startsWith('fan_');
+      const isDefaultUsername = profile.username.startsWith('abc_');
       const isMissingDetails = !profile.country || profile.country === 'Unknown' || !profile.supported_team || profile.supported_team === 'Neutral';
 
       if (isDefaultUsername || isMissingDetails) {

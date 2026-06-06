@@ -113,6 +113,14 @@ export default function Navbar() {
                           Dashboard
                         </Link>
                         <Link
+                          href="/profile"
+                          onClick={() => setShowDropdown(false)}
+                          className="flex items-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-text-muted hover:text-white hover:bg-surface-hover transition-colors"
+                        >
+                          <User className="w-4 h-4 text-gaming-neon" />
+                          Profile Settings
+                        </Link>
+                        <Link
                           href="/fancard"
                           onClick={() => setShowDropdown(false)}
                           className="flex items-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-text-muted hover:text-white hover:bg-surface-hover transition-colors"
@@ -195,7 +203,7 @@ export default function Navbar() {
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-2 gap-2 pt-2">
+                <div className="grid grid-cols-3 gap-2 pt-2">
                   <Link
                     href="/dashboard"
                     onClick={() => setIsOpen(false)}
@@ -203,6 +211,14 @@ export default function Navbar() {
                   >
                     <LayoutDashboard className="w-3.5 h-3.5 text-gaming-green" />
                     Dash
+                  </Link>
+                  <Link
+                    href="/profile"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center justify-center gap-1.5 py-2 rounded-md bg-surface border border-border-dark text-xs font-bold uppercase text-white"
+                  >
+                    <User className="w-3.5 h-3.5 text-gaming-neon" />
+                    Profile
                   </Link>
                   <Link
                     href="/fancard"

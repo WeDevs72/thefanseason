@@ -151,12 +151,26 @@ create policy "Service role full access on user_badges" on public.user_badges fo
 
 
 -- 9. Trigger for automatic profile creation when user signs up
+create or replace function public.generate_random_username()
+returns text as $$
+declare
+  chars text := 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  result text := 'abc_';
+  i integer;
+begin
+  for i in 1..10 loop
+    result := result || substr(chars, floor(random() * length(chars) + 1)::integer, 1);
+  end loop;
+  return result;
+end;
+$$ language plpgsql;
+
 create or replace function public.handle_new_user()
 returns trigger as $$
 declare
   default_username text;
 begin
-  default_username := coalesce(new.raw_user_meta_data->>'username', 'fan_' || substr(md5(new.id::text), 1, 8));
+  default_username := public.generate_random_username();
   
   insert into public.profiles (id, username, full_name, avatar_url, country, supported_team, fan_card_tier, is_premium)
   values (
