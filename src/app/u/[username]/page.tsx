@@ -147,7 +147,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
           profile={profile as Profile}
           stats={stats as LeaderboardEntry | null}
           badges={badges}
-          theme={(profile.card_theme as 'free' | 'gold' | 'neon' | 'galaxy') || 'free'}
+          theme={profile.card_theme || 'free'}
           titleBadge={profile.title_badge}
         />
       </div>

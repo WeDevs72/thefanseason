@@ -329,3 +329,89 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
+/* Ensure the collectible FanCards retain their correct dark colors in light mode */
+.light .fancard-component {
+  color: #ffffff !important;
+}
+.light .fancard-component .text-white {
+  color: #ffffff !important;
+}
+.light .fancard-component .text-white\/30 {
+  color: rgba(255, 255, 255, 0.3) !important;
+}
+.light .fancard-component .text-white\/45 {
+  color: rgba(255, 255, 255, 0.45) !important;
+}
+.light .fancard-component .text-white\/50 {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+.light .fancard-component .text-zinc-300 {
+  color: #d4d4d8 !important;
+}
+.light .fancard-component .text-zinc-400 {
+  color: #a1a1aa !important;
+}
+.light .fancard-component .text-zinc-500 {
+  color: #71717a !important;
+}
+.light .fancard-component .text-zinc-600 {
+  color: #52525b !important;
+}
+.light .fancard-component .bg-black\/30 {
+  background-color: rgba(0, 0, 0, 0.3) !important;
+}
+.light .fancard-component .bg-black\/40 {
+  background-color: rgba(0, 0, 0, 0.4) !important;
+}
+.light .fancard-component .bg-black\/45 {
+  background-color: rgba(0, 0, 0, 0.45) !important;
+}
+.light .fancard-component .bg-white\/5 {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+.light .fancard-component .bg-white\/10 {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+.light .fancard-component .border-white\/5 {
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+.light .fancard-component .border-white\/10 {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+.light .fancard-component .border-white\/20 {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+.light .fancard-component .border-zinc-700 {
+  border-color: #3f3f46 !important;
+}
+.light .fancard-component .bg-zinc-800 {
+  background-color: #27272a !important;
+}
+.light .fancard-component .bg-zinc-950 {
+  background-color: #09090b !important;
+}
+.light .fancard-component .bg-\[\#0b0c10\]\/80 {
+  background-color: rgba(11, 12, 16, 0.8) !important;
+}
+
+/* Hardcoded dark backgrounds in global containers should adapt to light mode */
+.light .bg-\[\#0d0f14\]\/80 {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+}
+.light .bg-\[\#0b0c10\]\/80 {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+}
+.light .bg-\[\#0a0c10\]\/60 {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+.light .bg-black\/40 {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+.light .bg-\[\#0a0a0c\]\/80 {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+}
+.light .bg-\[\#1b170c\] {
+  background-color: #fffbeb !important; /* light yellow for premium banner */
+  border-color: #fde68a !important;
+}
+

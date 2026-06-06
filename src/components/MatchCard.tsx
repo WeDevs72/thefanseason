@@ -67,7 +67,7 @@ export default function MatchCard({ match, prediction, onPredictionSubmit, timez
     // Short letters fallback
     const initials = name.slice(0, 3).toUpperCase();
     return (
-      <div className="w-10 h-10 rounded-full bg-zinc-800 border border-border-dark flex items-center justify-center font-mono font-black text-xs text-white">
+      <div className="w-10 h-10 rounded-full bg-surface border border-border-dark flex items-center justify-center font-mono font-black text-xs text-text-primary">
         {initials}
       </div>
     );

@@ -7,7 +7,7 @@ export interface Profile {
   supported_team: string | null;
   fan_card_tier: 'rookie' | 'follower' | 'analyst' | 'expert' | 'legend';
   is_premium: boolean;
-  card_theme: 'free' | 'gold' | 'neon' | 'galaxy';
+  card_theme: string;
   title_badge: string | null;
   created_at: string;
 }

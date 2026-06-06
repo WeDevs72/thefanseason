@@ -59,7 +59,7 @@ export default function LeaderboardRow({ entry, rank, isCurrentUser }: Leaderboa
       <td className="px-4 py-3">
         <div className="flex items-center gap-3">
           <div className={`w-8 h-8 rounded-full border flex items-center justify-center text-xs font-bold uppercase font-mono ${
-            isCurrentUser ? 'border-gaming-green bg-gaming-green/10 text-gaming-green' : 'border-border-dark bg-zinc-800 text-white'
+            isCurrentUser ? 'border-gaming-green bg-gaming-green/10 text-gaming-green' : 'border-border-dark bg-surface text-text-primary'
           }`}>
             {username[0]}
           </div>

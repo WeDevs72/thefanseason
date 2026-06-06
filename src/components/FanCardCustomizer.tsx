@@ -16,12 +16,36 @@ interface FanCardCustomizerProps {
 }
 
 const TITLE_BADGES = ['The Analyst', 'Goal God', 'Tactician', 'Oracle'];
-const THEMES: { id: 'free' | 'gold' | 'neon' | 'galaxy'; label: string; price: number }[] = [
-  { id: 'free', label: 'Rookie Dark (Free)', price: 0 },
-  { id: 'gold', label: 'Championship Gold', price: 249 },
-  { id: 'neon', label: 'Esports Green', price: 249 },
-  { id: 'galaxy', label: 'Hyperdrive Purple', price: 249 }
+const THEMES: { id: 'free' | 'gold' | 'neon' | 'galaxy' | 'shield_blue' | 'shield_gold' | 'shield_red' | 'shield_green' | 'shield_purple'; label: string; shortLabel: string; price: number }[] = [
+  { id: 'free', label: 'Rookie Dark (Free)', shortLabel: 'Rookie', price: 0 },
+  { id: 'gold', label: 'Championship Gold', shortLabel: 'Gold FUT', price: 249 },
+  { id: 'neon', label: 'Esports Green', shortLabel: 'Green FUT', price: 249 },
+  { id: 'galaxy', label: 'Hyperdrive Purple', shortLabel: 'Purple FUT', price: 249 },
+  { id: 'shield_blue', label: 'Shield Sapphire (Blue)', shortLabel: 'Blue Shield', price: 249 },
+  { id: 'shield_gold', label: 'Shield Aurum (Gold)', shortLabel: 'Gold Shield', price: 249 },
+  { id: 'shield_red', label: 'Shield Ruby (Red)', shortLabel: 'Red Shield', price: 249 },
+  { id: 'shield_green', label: 'Shield Emerald (Green)', shortLabel: 'Green Shield', price: 249 },
+  { id: 'shield_purple', label: 'Shield Amethyst (Purple)', shortLabel: 'Purple Shield', price: 249 }
 ];
+
+const SHIELD_STYLES = [
+  { id: 'classic', label: 'Classic Shield' },
+  { id: 'apex', label: 'Apex Crest' },
+  { id: 'cyber', label: 'Cyber Edge' },
+  { id: 'banner', label: 'Banner Guard' },
+  { id: 'titan', label: 'Titan Aegis' }
+] as const;
+
+const SHIELD_COLORS = [
+  { id: 'blue', label: 'Sapphire Blue', colorClass: 'bg-[#00E5FF]' },
+  { id: 'gold', label: 'Aurum Gold', colorClass: 'bg-[#FFD700]' },
+  { id: 'red', label: 'Ruby Red', colorClass: 'bg-[#EF4444]' },
+  { id: 'green', label: 'Emerald Green', colorClass: 'bg-[#00C853]' },
+  { id: 'purple', label: 'Amethyst Purple', colorClass: 'bg-[#A855F7]' },
+  { id: 'orange', label: 'Amber Orange', colorClass: 'bg-[#F97316]' },
+  { id: 'cyan', label: 'Diamond Cyan', colorClass: 'bg-[#06B6D4]' },
+  { id: 'pink', label: 'Quartz Pink', colorClass: 'bg-[#EC4899]' }
+] as const;
 
 export default function FanCardCustomizer({ initialProfile, stats, badges }: FanCardCustomizerProps) {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -30,13 +54,56 @@ export default function FanCardCustomizer({ initialProfile, stats, badges }: Fan
 
   // Customization state
   const [profile, setProfile] = useState<Profile>(initialProfile);
-  const [theme, setTheme] = useState<'free' | 'gold' | 'neon' | 'galaxy'>(
-    (initialProfile.card_theme as 'free' | 'gold' | 'neon' | 'galaxy') || 'free'
+  const [theme, setTheme] = useState<string>(
+    initialProfile.card_theme || 'free'
   );
   const [titleBadge, setTitleBadge] = useState<string | null>(initialProfile.title_badge || null);
   const [isCopied, setIsCopied] = useState(false);
   const [saving, setSaving] = useState(false);
   const [exporting, setExporting] = useState(false);
+
+  // Sub-states to parse and synchronize dynamic layouts & colors
+  const [cardLayout, setCardLayout] = useState<'fut' | 'shield'>(
+    (initialProfile.card_theme || 'free').startsWith('shield_') ? 'shield' : 'fut'
+  );
+  
+  const [shieldStyle, setShieldStyle] = useState<'classic' | 'apex' | 'cyber' | 'banner' | 'titan'>(() => {
+    const t = initialProfile.card_theme || 'free';
+    if (t.startsWith('shield_')) {
+      const parts = t.split('_');
+      if (parts.length === 3) return parts[1] as any;
+    }
+    return 'classic';
+  });
+
+  const [shieldColor, setShieldColor] = useState<'blue' | 'gold' | 'red' | 'green' | 'purple' | 'orange' | 'cyan' | 'pink'>(() => {
+    const t = initialProfile.card_theme || 'free';
+    if (t.startsWith('shield_')) {
+      const parts = t.split('_');
+      if (parts.length === 2) return parts[1] as any;
+      if (parts.length === 3) return parts[2] as any;
+    }
+    return 'blue';
+  });
+
+  const handleLayoutChange = (newLayout: 'fut' | 'shield') => {
+    setCardLayout(newLayout);
+    if (newLayout === 'fut') {
+      setTheme((prev) => (prev.startsWith('shield_') ? 'free' : prev));
+    } else {
+      setTheme(`shield_${shieldStyle}_${shieldColor}`);
+    }
+  };
+
+  const handleShieldStyleChange = (newStyle: 'classic' | 'apex' | 'cyber' | 'banner' | 'titan') => {
+    setShieldStyle(newStyle);
+    setTheme(`shield_${newStyle}_${shieldColor}`);
+  };
+
+  const handleShieldColorChange = (newColor: 'blue' | 'gold' | 'red' | 'green' | 'purple' | 'orange' | 'cyan' | 'pink') => {
+    setShieldColor(newColor);
+    setTheme(`shield_${shieldStyle}_${newColor}`);
+  };
 
   const supabase = createClientComponentClient();
 
@@ -325,27 +392,108 @@ export default function FanCardCustomizer({ initialProfile, stats, badges }: Fan
                 </button>
               </div>
             ) : (
-              <div className="space-y-4">
-                {/* Theme choice */}
+              <div className="space-y-6">
+                {/* Layout Switcher */}
                 <div>
                   <label className="text-[10px] text-text-muted font-bold uppercase tracking-wider block mb-2">
-                    Select Card Frame Style
+                    Card Style Type
                   </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {THEMES.map((t) => (
-                      <button
-                        key={t.id}
-                        onClick={() => setTheme(t.id)}
-                        className={`p-2.5 border text-center font-bold text-xs uppercase rounded-lg transition-all ${theme === t.id
-                            ? 'border-gaming-green bg-gaming-green/5 text-gaming-green'
-                            : 'border-border-dark text-text-muted hover:border-gaming-green/20 hover:text-white'
-                          }`}
-                      >
-                        {t.label.split(' ')[0]}
-                      </button>
-                    ))}
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleLayoutChange('fut')}
+                      className={`p-2.5 border text-center font-bold text-xs uppercase rounded-lg transition-all ${cardLayout === 'fut'
+                          ? 'border-gaming-green bg-gaming-green/5 text-gaming-green'
+                          : 'border-border-dark text-text-muted hover:border-gaming-green/20 hover:text-white'
+                        }`}
+                    >
+                      Futuristic Card (FUT)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleLayoutChange('shield')}
+                      className={`p-2.5 border text-center font-bold text-xs uppercase rounded-lg transition-all ${cardLayout === 'shield'
+                          ? 'border-gaming-green bg-gaming-green/5 text-gaming-green'
+                          : 'border-border-dark text-text-muted hover:border-gaming-green/20 hover:text-white'
+                        }`}
+                    >
+                      Jersey Shield Card
+                    </button>
                   </div>
                 </div>
+
+                {/* If FUT Layout is active */}
+                {cardLayout === 'fut' && (
+                  <div>
+                    <label className="text-[10px] text-text-muted font-bold uppercase tracking-wider block mb-2">
+                      Select FUT Frame Theme
+                    </label>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {THEMES.filter(t => !t.id.startsWith('shield_')).map((t) => (
+                        <button
+                          key={t.id}
+                          onClick={() => setTheme(t.id)}
+                          className={`p-2.5 border text-center font-bold text-xs uppercase rounded-lg transition-all ${theme === t.id
+                              ? 'border-gaming-green bg-gaming-green/5 text-gaming-green'
+                              : 'border-border-dark text-text-muted hover:border-gaming-green/20 hover:text-white'
+                            }`}
+                        >
+                          {t.shortLabel}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* If Shield Layout is active */}
+                {cardLayout === 'shield' && (
+                  <div className="space-y-4">
+                    {/* Shield Style selector */}
+                    <div>
+                      <label className="text-[10px] text-text-muted font-bold uppercase tracking-wider block mb-2">
+                        Select Shield Frame Shape
+                      </label>
+                      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                        {SHIELD_STYLES.map((styleOpt) => (
+                          <button
+                            key={styleOpt.id}
+                            type="button"
+                            onClick={() => handleShieldStyleChange(styleOpt.id)}
+                            className={`p-2 border text-center font-bold text-[10px] uppercase rounded-lg transition-all ${shieldStyle === styleOpt.id
+                                ? 'border-gaming-green bg-gaming-green/5 text-gaming-green'
+                                : 'border-border-dark text-text-muted hover:border-gaming-green/20 hover:text-white'
+                              }`}
+                          >
+                            {styleOpt.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Shield Color selector */}
+                    <div>
+                      <label className="text-[10px] text-text-muted font-bold uppercase tracking-wider block mb-2">
+                        Select Jersey Shield Color
+                      </label>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        {SHIELD_COLORS.map((colorOpt) => (
+                          <button
+                            key={colorOpt.id}
+                            type="button"
+                            onClick={() => handleShieldColorChange(colorOpt.id)}
+                            className={`p-2 border text-left font-bold text-[10px] uppercase rounded-lg transition-all flex items-center gap-2 ${shieldColor === colorOpt.id
+                                ? 'border-gaming-green bg-gaming-green/5 text-gaming-green'
+                                : 'border-border-dark text-text-muted hover:border-gaming-green/20 hover:text-white'
+                              }`}
+                          >
+                            <span className={`w-3 h-3 rounded-full shrink-0 border border-white/20 ${colorOpt.colorClass}`} />
+                            <span className="truncate">{colorOpt.label}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* Title badge selection */}
                 <div>

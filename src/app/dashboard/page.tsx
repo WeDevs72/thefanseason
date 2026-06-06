@@ -141,7 +141,7 @@ export default async function DashboardPage() {
               profile={profile}
               stats={stats}
               badges={predictions} // Using predictions as mock badge references if needed, or null
-              theme={(profile.card_theme as 'free' | 'gold' | 'neon' | 'galaxy') || 'free'}
+              theme={profile.card_theme || 'free'}
               titleBadge={profile.title_badge}
             />
           </div>

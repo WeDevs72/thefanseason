@@ -24,7 +24,29 @@ export async function GET(req: NextRequest) {
       galaxy: { border: '#8B5CF6', bg: 'linear-gradient(135deg, #18092b 0%, #0d0f14 100%)', accent: '#8B5CF6' }
     };
 
-    const activeTheme = themes[theme] || themes.free;
+    let activeTheme = themes[theme];
+    
+    if (!activeTheme && theme.startsWith('shield_')) {
+      const parts = theme.split('_');
+      const shieldColor = parts.length === 3 ? parts[2] : parts[1] || 'blue';
+      
+      const shieldColors: { [key: string]: { border: string; bg: string; accent: string } } = {
+        blue: { border: '#3B82F6', bg: 'linear-gradient(135deg, #0a1e3f 0%, #040810 100%)', accent: '#00E5FF' },
+        gold: { border: '#D97706', bg: 'linear-gradient(135deg, #2a1d04 0%, #080501 100%)', accent: '#FFD700' },
+        red: { border: '#991B1B', bg: 'linear-gradient(135deg, #2c050a 0%, #0a0203 100%)', accent: '#EF4444' },
+        green: { border: '#065F46', bg: 'linear-gradient(135deg, #012211 0%, #020804 100%)', accent: '#00C853' },
+        purple: { border: '#5B21B6', bg: 'linear-gradient(135deg, #1c082e 0%, #06020a 100%)', accent: '#A855F7' },
+        orange: { border: '#C2410C', bg: 'linear-gradient(135deg, #2d1203 0%, #090300 100%)', accent: '#F97316' },
+        cyan: { border: '#0891B2', bg: 'linear-gradient(135deg, #031d26 0%, #01060a 100%)', accent: '#06B6D4' },
+        pink: { border: '#BE185D', bg: 'linear-gradient(135deg, #2b031b 0%, #0a0006 100%)', accent: '#EC4899' },
+      };
+      
+      activeTheme = shieldColors[shieldColor] || shieldColors.blue;
+    }
+    
+    if (!activeTheme) {
+      activeTheme = themes.free;
+    }
 
     return new ImageResponse(
       (
