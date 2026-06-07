@@ -54,6 +54,7 @@ const FanCard = forwardRef<HTMLDivElement, FanCardProps>(({
   const isPremium = profile.is_premium && theme !== 'free';
   const avatarLetter = username[0]?.toUpperCase() || 'U';
   const isShield = theme.startsWith('shield_');
+  const isFutJersey = theme.startsWith('fut_');
   let shieldStyle = 'classic';
   let shieldColor = 'blue';
 
@@ -66,14 +67,16 @@ const FanCard = forwardRef<HTMLDivElement, FanCardProps>(({
       shieldStyle = parts[1] || 'classic';
       shieldColor = parts[2] || 'blue';
     }
+  } else if (isFutJersey) {
+    const parts = theme.split('_');
+    shieldColor = parts[parts.length - 1] || 'blue';
   }
 
   const shieldClipPaths = {
     classic: 'polygon(0% 0%, 100% 0%, 100% 88%, 50% 100%, 0% 88%)',
     apex: 'polygon(0% 0%, 100% 0%, 100% 80%, 50% 100%, 0% 80%)',
     cyber: 'polygon(12% 0%, 88% 0%, 100% 12%, 100% 88%, 50% 100%, 0% 88%, 0% 12%)',
-    banner: 'polygon(0% 0%, 50% 4%, 100% 0%, 100% 88%, 50% 100%, 0% 88%)',
-    titan: 'polygon(0% 12%, 50% 0%, 100% 12%, 100% 85%, 50% 100%, 0% 85%)'
+    banner: 'polygon(0% 0%, 50% 4%, 100% 0%, 100% 88%, 50% 100%, 0% 88%)'
   };
 
   const shieldColorData = {
@@ -135,9 +138,23 @@ const FanCard = forwardRef<HTMLDivElement, FanCardProps>(({
     }
   };
 
-  const futTheme = (isShield ? 'free' : theme) as 'free' | 'gold' | 'neon' | 'galaxy';
+  const futTheme = (isShield || isFutJersey ? 'free' : theme) as 'free' | 'gold' | 'neon' | 'galaxy';
   const clipPathVal = shieldClipPaths[shieldStyle as keyof typeof shieldClipPaths] || shieldClipPaths.classic;
   const sTheme = shieldColorData[shieldColor as keyof typeof shieldColorData] || shieldColorData.blue;
+
+  const borderTopColors = {
+    blue: '#00E5FF',
+    gold: '#FFD700',
+    red: '#EF4444',
+    green: '#00C853',
+    purple: '#A855F7',
+    orange: '#F97316',
+    cyan: '#06B6D4',
+    pink: '#EC4899'
+  };
+  const borderTopColorVal = isFutJersey
+    ? (borderTopColors[shieldColor as keyof typeof borderTopColors] || '#1F2937')
+    : (futTheme === 'gold' ? '#FFD700' : futTheme === 'neon' ? '#00C853' : futTheme === 'galaxy' ? '#8B5CF6' : '#1F2937');
 
   if (isShield) {
     const ratingValue = stats?.accuracy_percent ? Math.round(Number(stats.accuracy_percent)) : 65;
@@ -178,7 +195,9 @@ const FanCard = forwardRef<HTMLDivElement, FanCardProps>(({
             </div>
 
             {/* TOP BAR */}
-            <div className="flex items-start justify-between z-10">
+            <div className={`flex items-start justify-between z-10 ${
+              shieldStyle === 'cyber' ? 'mx-3 mt-2' : ''
+            }`}>
               {/* Top Left: Season & Rarity Serial */}
               <div className="flex flex-col font-mono">
                 <span className="text-[9px] font-bold text-white/50 tracking-wider">2026-27</span>
@@ -198,15 +217,15 @@ const FanCard = forwardRef<HTMLDivElement, FanCardProps>(({
 
             {/* CENTER PORTRAIT AREA */}
             <div className="flex flex-col items-center justify-center z-10 relative">
-              <div className="w-32 h-32 relative flex items-center justify-center overflow-hidden border border-white/10 bg-black/40"
+              <div className="w-32 h-32 relative flex items-center justify-center overflow-hidden bg-white/10"
                 style={{
-                  clipPath: 'polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%)'
+                  clipPath: clipPathVal
                 }}
               >
                 {/* Image inset */}
-                <div className={`absolute inset-[2px] bg-gradient-to-b ${sTheme.bg} flex items-center justify-center`}
+                <div className={`absolute inset-[1.5px] bg-gradient-to-b ${sTheme.bg} flex items-center justify-center`}
                   style={{
-                    clipPath: 'polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%)'
+                    clipPath: clipPathVal
                   }}
                 >
                   {profile.avatar_url ? (
@@ -271,11 +290,14 @@ const FanCard = forwardRef<HTMLDivElement, FanCardProps>(({
   return (
     <div
       ref={ref}
-      className={`fancard-component w-[320px] h-[480px] rounded-2xl relative p-5 flex flex-col justify-between overflow-hidden shadow-2xl transition-all select-none border-t-4 ${cardThemeStyles[futTheme]
-        }`}
+      className={`fancard-component w-[320px] h-[480px] rounded-2xl relative p-5 flex flex-col justify-between overflow-hidden shadow-2xl transition-all select-none border-t-4 ${
+        isFutJersey 
+          ? `bg-gradient-to-b ${sTheme.bg} border border-white/10 text-white` 
+          : cardThemeStyles[futTheme]
+      }`}
       style={{
-        backgroundImage: 'radial-gradient(circle at 50% 10%, rgba(255,255,255,0.03) 0%, transparent 80%)',
-        borderTopColor: futTheme === 'gold' ? '#FFD700' : futTheme === 'neon' ? '#00C853' : futTheme === 'galaxy' ? '#8B5CF6' : '#1F2937'
+        backgroundImage: isFutJersey ? undefined : 'radial-gradient(circle at 50% 10%, rgba(255,255,255,0.03) 0%, transparent 80%)',
+        borderTopColor: borderTopColorVal
       }}
     >
       {/* Cyber Grid Sub-Overlay */}
@@ -313,11 +335,21 @@ const FanCard = forwardRef<HTMLDivElement, FanCardProps>(({
       {/* MAIN BIO ROW: Avatar circle & User Details */}
       <div className="flex flex-col items-center justify-center text-center mt-3 z-10 gap-2">
         {/* Avatar */}
-        <div className={`w-20 h-20 rounded-full border-2 flex items-center justify-center font-mono font-black text-3xl shadow-lg relative ${theme === 'gold' ? 'border-gaming-gold bg-gaming-gold/10 text-gaming-gold' :
-            theme === 'neon' ? 'border-gaming-green bg-gaming-green/10 text-gaming-green' :
-              theme === 'galaxy' ? 'border-gaming-purple bg-gaming-purple/10 text-gaming-purple' :
-                'border-zinc-700 bg-zinc-800 text-white'
-          }`}>
+        <div 
+          className={`w-20 h-20 rounded-full border-2 flex items-center justify-center font-mono font-black text-3xl shadow-lg relative ${
+            isFutJersey
+              ? ''
+              : (theme === 'gold' ? 'border-gaming-gold bg-gaming-gold/10 text-gaming-gold' :
+                 theme === 'neon' ? 'border-gaming-green bg-gaming-green/10 text-gaming-green' :
+                 theme === 'galaxy' ? 'border-gaming-purple bg-gaming-purple/10 text-gaming-purple' :
+                 'border-zinc-700 bg-zinc-800 text-white')
+          }`}
+          style={isFutJersey ? {
+            borderColor: borderTopColorVal,
+            backgroundColor: `${borderTopColorVal}15`,
+            color: borderTopColorVal
+          } : undefined}
+        >
           {username[0]?.toUpperCase()}
           {/* Pro tag overlay */}
           {profile.is_premium && (

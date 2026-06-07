@@ -65,13 +65,13 @@ export default function Navbar() {
 
           {/* User Auth Section */}
           <div className="hidden md:flex items-center gap-4">
-            <button
+            {/* <button
               onClick={toggleTheme}
               className="p-2.5 rounded-lg bg-surface border border-border-dark hover:border-gaming-green/45 text-text-muted hover:text-white transition-colors cursor-pointer"
               title={theme === 'dark' ? 'Activate Light Mode' : 'Activate Dark Mode'}
             >
               {theme === 'dark' ? <Sun className="w-4 h-4 text-gaming-gold fill-gaming-gold/15" /> : <Moon className="w-4 h-4 text-gaming-purple fill-gaming-purple/15" />}
-            </button>
+            </button> */}
             {loading ? (
               <div className="h-9 w-24 bg-surface rounded animate-pulse" />
             ) : user ? (
@@ -84,7 +84,7 @@ export default function Navbar() {
                   <div className="w-8 h-8 rounded-full border border-gaming-green/60 bg-gaming-green/10 flex items-center justify-center text-gaming-green font-bold text-sm uppercase">
                     {profile?.username ? profile.username[0] : 'U'}
                   </div>
-                  
+
                   {/* User details */}
                   <div className="hidden lg:block">
                     <div className="text-xs font-bold text-white max-w-[120px] truncate leading-tight">
@@ -111,7 +111,7 @@ export default function Navbar() {
                           </p>
                         )}
                       </div>
-                      
+
                       <div className="py-1">
                         <Link
                           href="/dashboard"
@@ -194,16 +194,15 @@ export default function Navbar() {
                 key={link.name}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-bold uppercase tracking-wider transition-colors ${
-                  pathname === link.href ? 'text-gaming-green bg-gaming-green/5' : 'text-text-muted hover:text-white hover:bg-surface-hover'
-                }`}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-bold uppercase tracking-wider transition-colors ${pathname === link.href ? 'text-gaming-green bg-gaming-green/5' : 'text-text-muted hover:text-white hover:bg-surface-hover'
+                  }`}
               >
                 <Icon className="w-4 h-4" />
                 {link.name}
               </Link>
             );
           })}
-          
+
           <div className="border-t border-border-dark mt-4 pt-4 px-3">
             {loading ? (
               <div className="h-9 w-full bg-surface rounded animate-pulse" />
@@ -218,7 +217,7 @@ export default function Navbar() {
                     <div className="text-[10px] text-gaming-gold font-bold uppercase">{profile?.fan_card_tier || 'rookie'}</div>
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-3 gap-2 pt-2">
                   <Link
                     href="/dashboard"
@@ -245,7 +244,7 @@ export default function Navbar() {
                     Card
                   </Link>
                 </div>
-                
+
                 <button
                   onClick={() => {
                     setIsOpen(false);

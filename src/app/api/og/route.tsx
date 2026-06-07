@@ -26,9 +26,9 @@ export async function GET(req: NextRequest) {
 
     let activeTheme = themes[theme];
     
-    if (!activeTheme && theme.startsWith('shield_')) {
+    if (!activeTheme && (theme.startsWith('shield_') || theme.startsWith('fut_'))) {
       const parts = theme.split('_');
-      const shieldColor = parts.length === 3 ? parts[2] : parts[1] || 'blue';
+      const shieldColor = parts[parts.length - 1] || 'blue';
       
       const shieldColors: { [key: string]: { border: string; bg: string; accent: string } } = {
         blue: { border: '#3B82F6', bg: 'linear-gradient(135deg, #0a1e3f 0%, #040810 100%)', accent: '#00E5FF' },

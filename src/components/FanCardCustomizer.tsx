@@ -32,8 +32,7 @@ const SHIELD_STYLES = [
   { id: 'classic', label: 'Classic Shield' },
   { id: 'apex', label: 'Apex Crest' },
   { id: 'cyber', label: 'Cyber Edge' },
-  { id: 'banner', label: 'Banner Guard' },
-  { id: 'titan', label: 'Titan Aegis' }
+  { id: 'banner', label: 'Banner Guard' }
 ] as const;
 
 const SHIELD_COLORS = [
@@ -66,8 +65,8 @@ export default function FanCardCustomizer({ initialProfile, stats, badges }: Fan
   const [cardLayout, setCardLayout] = useState<'fut' | 'shield'>(
     (initialProfile.card_theme || 'free').startsWith('shield_') ? 'shield' : 'fut'
   );
-  
-  const [shieldStyle, setShieldStyle] = useState<'classic' | 'apex' | 'cyber' | 'banner' | 'titan'>(() => {
+
+  const [shieldStyle, setShieldStyle] = useState<'classic' | 'apex' | 'cyber' | 'banner'>(() => {
     const t = initialProfile.card_theme || 'free';
     if (t.startsWith('shield_')) {
       const parts = t.split('_');
@@ -82,6 +81,9 @@ export default function FanCardCustomizer({ initialProfile, stats, badges }: Fan
       const parts = t.split('_');
       if (parts.length === 2) return parts[1] as any;
       if (parts.length === 3) return parts[2] as any;
+    } else if (t.startsWith('fut_')) {
+      const parts = t.split('_');
+      return parts[parts.length - 1] as any;
     }
     return 'blue';
   });
@@ -89,20 +91,44 @@ export default function FanCardCustomizer({ initialProfile, stats, badges }: Fan
   const handleLayoutChange = (newLayout: 'fut' | 'shield') => {
     setCardLayout(newLayout);
     if (newLayout === 'fut') {
-      setTheme((prev) => (prev.startsWith('shield_') ? 'free' : prev));
+      if (theme.startsWith('shield_')) {
+        const parts = theme.split('_');
+        const color = parts[parts.length - 1] || 'blue';
+        setTheme(`fut_${color}`);
+      } else {
+        setTheme(theme);
+      }
     } else {
-      setTheme(`shield_${shieldStyle}_${shieldColor}`);
+      if (theme.startsWith('fut_')) {
+        const parts = theme.split('_');
+        const color = parts[parts.length - 1] || 'blue';
+        setTheme(`shield_${shieldStyle}_${color}`);
+      } else if (['free', 'gold', 'neon', 'galaxy'].includes(theme)) {
+        const colorMap = { free: 'blue', gold: 'gold', neon: 'green', galaxy: 'purple' };
+        const color = colorMap[theme as 'free' | 'gold' | 'neon' | 'galaxy'] || 'blue';
+        setTheme(`shield_${shieldStyle}_${color}`);
+      } else {
+        setTheme(`shield_${shieldStyle}_${shieldColor}`);
+      }
     }
   };
 
-  const handleShieldStyleChange = (newStyle: 'classic' | 'apex' | 'cyber' | 'banner' | 'titan') => {
+  const handleShieldStyleChange = (newStyle: 'classic' | 'apex' | 'cyber' | 'banner') => {
     setShieldStyle(newStyle);
     setTheme(`shield_${newStyle}_${shieldColor}`);
   };
 
   const handleShieldColorChange = (newColor: 'blue' | 'gold' | 'red' | 'green' | 'purple' | 'orange' | 'cyan' | 'pink') => {
     setShieldColor(newColor);
-    setTheme(`shield_${shieldStyle}_${newColor}`);
+    if (cardLayout === 'shield') {
+      setTheme(`shield_${shieldStyle}_${newColor}`);
+    } else {
+      setTheme(`fut_${newColor}`);
+    }
+  };
+
+  const handleLegacyFutThemeChange = (newTheme: 'free' | 'gold' | 'neon' | 'galaxy') => {
+    setTheme(newTheme);
   };
 
   const supabase = createClientComponentClient();
@@ -403,8 +429,8 @@ export default function FanCardCustomizer({ initialProfile, stats, badges }: Fan
                       type="button"
                       onClick={() => handleLayoutChange('fut')}
                       className={`p-2.5 border text-center font-bold text-xs uppercase rounded-lg transition-all ${cardLayout === 'fut'
-                          ? 'border-gaming-green bg-gaming-green/5 text-gaming-green'
-                          : 'border-border-dark text-text-muted hover:border-gaming-green/20 hover:text-white'
+                        ? 'border-gaming-green bg-gaming-green/5 text-gaming-green'
+                        : 'border-border-dark text-text-muted hover:border-gaming-green/20 hover:text-white'
                         }`}
                     >
                       Futuristic Card (FUT)
@@ -413,8 +439,8 @@ export default function FanCardCustomizer({ initialProfile, stats, badges }: Fan
                       type="button"
                       onClick={() => handleLayoutChange('shield')}
                       className={`p-2.5 border text-center font-bold text-xs uppercase rounded-lg transition-all ${cardLayout === 'shield'
-                          ? 'border-gaming-green bg-gaming-green/5 text-gaming-green'
-                          : 'border-border-dark text-text-muted hover:border-gaming-green/20 hover:text-white'
+                        ? 'border-gaming-green bg-gaming-green/5 text-gaming-green'
+                        : 'border-border-dark text-text-muted hover:border-gaming-green/20 hover:text-white'
                         }`}
                     >
                       Jersey Shield Card
@@ -424,23 +450,50 @@ export default function FanCardCustomizer({ initialProfile, stats, badges }: Fan
 
                 {/* If FUT Layout is active */}
                 {cardLayout === 'fut' && (
-                  <div>
-                    <label className="text-[10px] text-text-muted font-bold uppercase tracking-wider block mb-2">
-                      Select FUT Frame Theme
-                    </label>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                      {THEMES.filter(t => !t.id.startsWith('shield_')).map((t) => (
-                        <button
-                          key={t.id}
-                          onClick={() => setTheme(t.id)}
-                          className={`p-2.5 border text-center font-bold text-xs uppercase rounded-lg transition-all ${theme === t.id
+                  <div className="space-y-4">
+                    {/* FUT Legacy Themes */}
+                    <div>
+                      <label className="text-[10px] text-text-muted font-bold uppercase tracking-wider block mb-2">
+                        Select FUT Theme Preset
+                      </label>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        {THEMES.filter(t => !t.id.startsWith('shield_')).map((t) => (
+                          <button
+                            key={t.id}
+                            type="button"
+                            onClick={() => handleLegacyFutThemeChange(t.id as any)}
+                            className={`p-2.5 border text-center font-bold text-xs uppercase rounded-lg transition-all ${theme === t.id
                               ? 'border-gaming-green bg-gaming-green/5 text-gaming-green'
                               : 'border-border-dark text-text-muted hover:border-gaming-green/20 hover:text-white'
-                            }`}
-                        >
-                          {t.shortLabel}
-                        </button>
-                      ))}
+                              }`}
+                          >
+                            {t.shortLabel}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* FUT Jersey Color selector */}
+                    <div>
+                      <label className="text-[10px] text-text-muted font-bold uppercase tracking-wider block mb-2">
+                        Or Pick a Custom Jersey Color
+                      </label>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        {SHIELD_COLORS.map((colorOpt) => (
+                          <button
+                            key={colorOpt.id}
+                            type="button"
+                            onClick={() => handleShieldColorChange(colorOpt.id)}
+                            className={`p-2 border text-left font-bold text-[10px] uppercase rounded-lg transition-all flex items-center gap-2 ${theme === `fut_${colorOpt.id}`
+                              ? 'border-gaming-green bg-gaming-green/5 text-gaming-green'
+                              : 'border-border-dark text-text-muted hover:border-gaming-green/20 hover:text-white'
+                              }`}
+                          >
+                            <span className={`w-3 h-3 rounded-full shrink-0 border border-white/20 ${colorOpt.colorClass}`} />
+                            <span className="truncate">{colorOpt.label}</span>
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -453,15 +506,15 @@ export default function FanCardCustomizer({ initialProfile, stats, badges }: Fan
                       <label className="text-[10px] text-text-muted font-bold uppercase tracking-wider block mb-2">
                         Select Shield Frame Shape
                       </label>
-                      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                         {SHIELD_STYLES.map((styleOpt) => (
                           <button
                             key={styleOpt.id}
                             type="button"
                             onClick={() => handleShieldStyleChange(styleOpt.id)}
-                            className={`p-2 border text-center font-bold text-[10px] uppercase rounded-lg transition-all ${shieldStyle === styleOpt.id
-                                ? 'border-gaming-green bg-gaming-green/5 text-gaming-green'
-                                : 'border-border-dark text-text-muted hover:border-gaming-green/20 hover:text-white'
+                            className={`p-2.5  border text-center font-bold text-[10px] uppercase rounded-lg transition-all ${shieldStyle === styleOpt.id
+                              ? 'border-gaming-green bg-gaming-green/5 text-gaming-green'
+                              : 'border-border-dark text-text-muted hover:border-gaming-green/20 hover:text-white'
                               }`}
                           >
                             {styleOpt.label}
@@ -482,8 +535,8 @@ export default function FanCardCustomizer({ initialProfile, stats, badges }: Fan
                             type="button"
                             onClick={() => handleShieldColorChange(colorOpt.id)}
                             className={`p-2 border text-left font-bold text-[10px] uppercase rounded-lg transition-all flex items-center gap-2 ${shieldColor === colorOpt.id
-                                ? 'border-gaming-green bg-gaming-green/5 text-gaming-green'
-                                : 'border-border-dark text-text-muted hover:border-gaming-green/20 hover:text-white'
+                              ? 'border-gaming-green bg-gaming-green/5 text-gaming-green'
+                              : 'border-border-dark text-text-muted hover:border-gaming-green/20 hover:text-white'
                               }`}
                           >
                             <span className={`w-3 h-3 rounded-full shrink-0 border border-white/20 ${colorOpt.colorClass}`} />
@@ -506,8 +559,8 @@ export default function FanCardCustomizer({ initialProfile, stats, badges }: Fan
                         key={badgeOption}
                         onClick={() => setTitleBadge(badgeOption)}
                         className={`p-2.5 border text-center font-bold text-xs uppercase rounded-lg transition-all ${titleBadge === badgeOption
-                            ? 'border-gaming-green bg-gaming-green/5 text-gaming-green'
-                            : 'border-border-dark text-text-muted hover:border-gaming-green/20 hover:text-white'
+                          ? 'border-gaming-green bg-gaming-green/5 text-gaming-green'
+                          : 'border-border-dark text-text-muted hover:border-gaming-green/20 hover:text-white'
                           }`}
                       >
                         {badgeOption}

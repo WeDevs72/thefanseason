@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { createAdminClient } from '@/lib/supabase-server';
 import { Trophy, Calendar, ShieldCheck, Flame, Star, Users, CheckSquare, Play } from 'lucide-react';
 import OnboardingModal from '@/components/OnboardingModal';
+import HeroFanCardCarousel from '@/components/HeroFanCardCarousel';
 
 // Force dynamic rendering to always load fresh prediction stats and matches
 export const revalidate = 0;
@@ -56,37 +57,55 @@ export default async function HomePage() {
       <div className="absolute top-[500px] right-10 w-[300px] h-[300px] bg-gaming-purple/5 rounded-full blur-[150px] pointer-events-none" />
 
       {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12 text-center relative z-10">
-        <span className="bg-gaming-green/15 text-gaming-green border border-gaming-green/30 text-[10px] font-black uppercase px-3 py-1 rounded-full tracking-widest inline-flex items-center gap-1.5 shadow-[0_0_15px_rgba(0,200,83,0.15)] animate-bounce">
-          <Star className="w-3.5 h-3.5 text-gaming-gold fill-gaming-gold" />
-          Football World Cup 2026 Prediction Arena
-        </span>
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center text-center lg:text-left">
+          {/* Left Column: Branding Copy & CTAs */}
+          <div className="lg:col-span-7 flex flex-col items-center lg:items-start">
+            <span className="bg-gaming-green/15 text-gaming-green border border-gaming-green/30 text-[10px] font-black uppercase px-3 py-1 rounded-full tracking-widest inline-flex items-center gap-1.5 shadow-[0_0_15px_rgba(0,200,83,0.15)] animate-bounce">
+              <Star className="w-3.5 h-3.5 text-gaming-gold fill-gaming-gold" />
+              Football World Cup 2026 Prediction Arena
+            </span>
 
-        <h1 className="text-4xl sm:text-6xl font-black uppercase tracking-wider text-white mt-6 font-mono leading-none">
-          Football 2026 <br className="sm:hidden" />
-          <span className="text-neon-gradient text-shadow-[0_0_20px_rgba(0,229,255,0.2)]">THEFANSEASON</span>
-        </h1>
+            <h1 className="text-4xl sm:text-6xl font-black uppercase tracking-wider text-white mt-6 font-mono leading-none">
+              Football 2026 <br className="sm:hidden" />
+              <span className="text-neon-gradient text-shadow-[0_0_20px_rgba(0,229,255,0.2)]">THEFANSEASON</span>
+            </h1>
 
-        <p className="text-sm sm:text-lg text-text-muted max-w-xl mx-auto mt-4 uppercase font-bold tracking-wider leading-relaxed">
-          Predict. Compete. Win. <br />
-          <span className="text-white">Formulate scorelines, acquire badges, unlock tiers, and dominate the global rankings.</span>
-        </p>
+            {/* Steps Visual Chain */}
+            <div className="flex items-center gap-2 sm:gap-4 font-mono font-black text-lg sm:text-2xl uppercase tracking-wider mt-6 mb-3">
+              <span className="text-gaming-neon text-shadow-[0_0_10px_rgba(0,229,255,0.3)]">Predict</span>
+              <span className="text-zinc-600">→</span>
+              <span className="text-gaming-green text-shadow-[0_0_10px_rgba(0,200,83,0.3)]">Compete</span>
+              <span className="text-zinc-600">→</span>
+              <span className="text-gaming-gold text-shadow-[0_0_10px_rgba(255,215,0,0.3)]">Win</span>
+            </div>
 
-        {/* Action CTAs */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
-          <Link
-            href="/fancard"
-            className="w-full sm:w-auto px-8 py-3.5 rounded-lg btn-gaming-primary text-sm font-black tracking-widest flex items-center justify-center gap-2"
-          >
-            Create Your Fan Card (Free)
-            <Play className="w-4 h-4 fill-black" />
-          </Link>
-          <Link
-            href="/predict"
-            className="w-full sm:w-auto px-8 py-3.5 rounded-lg btn-gaming-secondary text-sm font-black tracking-widest"
-          >
-            Start Predicting
-          </Link>
+            <p className="text-sm sm:text-base text-text-muted mt-2 uppercase font-bold tracking-wider leading-relaxed max-w-xl">
+              Formulate scorelines, acquire badges, unlock tiers, and dominate the global rankings.
+            </p>
+
+            {/* Action CTAs */}
+            <div className="flex flex-col sm:flex-row items-center gap-4 mt-8 w-full sm:w-auto">
+              <Link
+                href="/predict"
+                className="w-full sm:w-auto px-8 py-3.5 rounded-lg btn-gaming-primary text-sm font-black tracking-widest flex items-center justify-center gap-2"
+              >
+                Start Predicting
+                <Play className="w-4 h-4 fill-black text-black" />
+              </Link>
+              <Link
+                href="/fancard"
+                className="w-full sm:w-auto px-8 py-3.5 rounded-lg btn-gaming-secondary text-sm font-black tracking-widest flex items-center justify-center"
+              >
+                Create Your Fan Card
+              </Link>
+            </div>
+          </div>
+
+          {/* Right Column: Flipping Fan Cards */}
+          <div className="lg:col-span-5 flex items-center justify-center">
+            <HeroFanCardCarousel />
+          </div>
         </div>
       </section>
 
