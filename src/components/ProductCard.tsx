@@ -43,7 +43,7 @@ export default function ProductCard({ product, onBuy, isPurchased, downloadUrl }
           <div className="flex flex-col">
             <span className="text-[9px] text-text-muted font-bold uppercase tracking-wider">Price</span>
             <span className="text-sm font-black font-mono text-white">
-              ₹{product.price_inr}
+              ${product.price_inr}
             </span>
           </div>
 

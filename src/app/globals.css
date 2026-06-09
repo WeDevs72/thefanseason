@@ -415,3 +415,14 @@ body {
   border-color: #fde68a !important;
 }
 
+/* Admin Panel — when .admin-shell is fixed/overlay, hide the public Navbar & Footer */
+body:has(.admin-shell) > nav,
+body:has(.admin-shell) > footer {
+  display: none !important;
+}
+
+/* Admin login page — hide public Navbar and Footer */
+body:has(.admin-login-page) > nav,
+body:has(.admin-login-page) > footer {
+  display: none !important;
+}

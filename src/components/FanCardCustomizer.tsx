@@ -18,14 +18,14 @@ interface FanCardCustomizerProps {
 const TITLE_BADGES = ['The Analyst', 'Goal God', 'Tactician', 'Oracle'];
 const THEMES: { id: 'free' | 'gold' | 'neon' | 'galaxy' | 'shield_blue' | 'shield_gold' | 'shield_red' | 'shield_green' | 'shield_purple'; label: string; shortLabel: string; price: number }[] = [
   { id: 'free', label: 'Rookie Dark (Free)', shortLabel: 'Rookie', price: 0 },
-  { id: 'gold', label: 'Championship Gold', shortLabel: 'Gold FUT', price: 249 },
-  { id: 'neon', label: 'Esports Green', shortLabel: 'Green FUT', price: 249 },
-  { id: 'galaxy', label: 'Hyperdrive Purple', shortLabel: 'Purple FUT', price: 249 },
-  { id: 'shield_blue', label: 'Shield Sapphire (Blue)', shortLabel: 'Blue Shield', price: 249 },
-  { id: 'shield_gold', label: 'Shield Aurum (Gold)', shortLabel: 'Gold Shield', price: 249 },
-  { id: 'shield_red', label: 'Shield Ruby (Red)', shortLabel: 'Red Shield', price: 249 },
-  { id: 'shield_green', label: 'Shield Emerald (Green)', shortLabel: 'Green Shield', price: 249 },
-  { id: 'shield_purple', label: 'Shield Amethyst (Purple)', shortLabel: 'Purple Shield', price: 249 }
+  { id: 'gold', label: 'Championship Gold', shortLabel: 'Gold FUT', price: 3 },
+  { id: 'neon', label: 'Esports Green', shortLabel: 'Green FUT', price: 3 },
+  { id: 'galaxy', label: 'Hyperdrive Purple', shortLabel: 'Purple FUT', price: 3 },
+  { id: 'shield_blue', label: 'Shield Sapphire (Blue)', shortLabel: 'Blue Shield', price: 3 },
+  { id: 'shield_gold', label: 'Shield Aurum (Gold)', shortLabel: 'Gold Shield', price: 3 },
+  { id: 'shield_red', label: 'Shield Ruby (Red)', shortLabel: 'Red Shield', price: 3 },
+  { id: 'shield_green', label: 'Shield Emerald (Green)', shortLabel: 'Green Shield', price: 3 },
+  { id: 'shield_purple', label: 'Shield Amethyst (Purple)', shortLabel: 'Purple Shield', price: 3 }
 ];
 
 const SHIELD_STYLES = [
@@ -158,7 +158,7 @@ export default function FanCardCustomizer({ initialProfile, stats, badges }: Fan
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          amount: 249, // ₹249 premium card price
+          amount: 3, // $3 premium card price
           productId: 'fancard_premium_upgrade',
           userId: profile.id
         })
@@ -172,8 +172,8 @@ export default function FanCardCustomizer({ initialProfile, stats, badges }: Fan
       // 2. Setup checkout options
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_placeholder',
-        amount: 24900, // in paise
-        currency: 'INR',
+        amount: 300, // in cents
+        currency: 'USD',
         name: 'TheFanSeason 2026',
         description: 'Premium Fan Card Upgrade',
         order_id: orderData.orderId,
@@ -187,7 +187,7 @@ export default function FanCardCustomizer({ initialProfile, stats, badges }: Fan
               ...response,
               productId: 'fancard_premium_upgrade',
               userId: profile.id,
-              amountInr: 249,
+              amountInr: 3,
               isMock: orderData.isMock
             })
           });
@@ -414,7 +414,7 @@ export default function FanCardCustomizer({ initialProfile, stats, badges }: Fan
                   onClick={handleUpgrade}
                   className="px-5 py-2.5 rounded-lg btn-gaming-gold text-xs font-black uppercase tracking-wider shrink-0"
                 >
-                  Upgrade ₹249
+                  Upgrade $3
                 </button>
               </div>
             ) : (

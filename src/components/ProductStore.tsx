@@ -68,8 +68,8 @@ export default function ProductStore({ initialProducts, purchasedProductIds }: P
       // 2. Setup options
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_placeholder',
-        amount: product.price_inr * 100, // paise
-        currency: 'INR',
+        amount: product.price_inr * 100, // cents
+        currency: 'USD',
         name: 'TheFanSeason Store 2026',
         description: product.name,
         order_id: orderData.orderId,

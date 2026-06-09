@@ -27,8 +27,8 @@ export async function POST(req: Request) {
     });
 
     const order = await razorpay.orders.create({
-      amount: amount * 100, // Razorpay amount in paise (INR * 100)
-      currency: 'INR',
+      amount: amount * 100, // Razorpay amount in cents (USD * 100)
+      currency: 'USD',
       receipt: `receipt_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
       notes: {
         productId: productId || 'fancard_premium_upgrade',
